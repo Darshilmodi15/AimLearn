@@ -1,10 +1,12 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { OAuth2Client } from "google-auth-library";
 import { User } from "../models/User.js";
 import { authenticate } from "../middleware/auth.js";
 import { HttpError, asyncHandler } from "../utils/http.js";
 import { serializeUser } from "../utils/serializers.js";
+import { env } from "../config/env.js";
 import {
   clearAuthCookies,
   hashToken,
@@ -15,6 +17,8 @@ import {
 } from "../utils/tokens.js";
 
 const router = Router();
+
+const googleClient = env.GOOGLE_CLIENT_ID ? new OAuth2Client(env.GOOGLE_CLIENT_ID) : null;
 
 const signupSchema = z.object({
   name: z.string().trim().min(2).max(80),
@@ -31,6 +35,10 @@ const signupSchema = z.object({
 const loginSchema = z.object({
   email: z.string().trim().email().toLowerCase(),
   password: z.string().min(1)
+});
+
+const googleSchema = z.object({
+  credential: z.string()
 });
 
 async function issueSession(user: InstanceType<typeof User>, response: Parameters<typeof setAuthCookies>[0]) {
@@ -64,12 +72,62 @@ router.post(
   asyncHandler(async (request, response) => {
     const input = loginSchema.parse(request.body);
     const user = await User.findOne({ email: input.email }).select("+passwordHash +refreshTokenHash");
-    if (!user || !(await bcrypt.compare(input.password, user.passwordHash))) {
+    if (!user || !user.passwordHash || !(await bcrypt.compare(input.password, user.passwordHash))) {
       throw new HttpError(401, "The email or password is incorrect.");
     }
 
     await issueSession(user, response);
     response.json({ user: serializeUser(user) });
+  })
+);
+
+router.post(
+  "/google",
+  asyncHandler(async (request, response) => {
+    if (!googleClient || !env.GOOGLE_CLIENT_ID) {
+      throw new HttpError(501, "Google authentication is not configured.");
+    }
+
+    const { credential } = googleSchema.parse(request.body);
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: env.GOOGLE_CLIENT_ID
+    });
+
+    const tokenPayload = ticket.getPayload();
+    if (!tokenPayload || !tokenPayload.email) {
+      throw new HttpError(400, "Invalid Google token.");
+    }
+
+    const { email, name, sub: googleId, picture } = tokenPayload;
+
+    let user = await User.findOne({
+      $or: [{ email: email.toLowerCase() }, { googleId }]
+    }).select("+refreshTokenHash");
+
+    let isNewUser = false;
+
+    if (user) {
+      if (!user.googleId) {
+        user.googleId = googleId;
+      }
+      if (picture && !user.avatarUrl) {
+        user.avatarUrl = picture;
+      }
+    } else {
+      isNewUser = true;
+      user = new User({
+        name: name || email.split("@")[0],
+        email: email.toLowerCase(),
+        googleId,
+        avatarUrl: picture,
+        role: "user"
+      });
+    }
+
+    await issueSession(user, response);
+    response.status(isNewUser ? 201 : 200).json({ user: serializeUser(user) });
   })
 );
 
