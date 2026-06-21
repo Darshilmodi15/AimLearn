@@ -7,10 +7,92 @@ The interface uses a restrained ivory, white, charcoal and bronze system with Co
 ## Applications
 
 ```text
-AimLearn/
-├── frontend/   React, Vite, React Router, responsive CSS
-├── backend/    Express, MongoDB/Mongoose, JWT cookies
-└── .github/    CI verification workflow
+.
+├── README.md
+├── backend
+│   ├── eslint.config.js
+│   ├── jest.config.cjs
+│   ├── package.json
+│   ├── src
+│   │   ├── app.test.ts
+│   │   ├── app.ts
+│   │   ├── config
+│   │   │   ├── database.ts
+│   │   │   └── env.ts
+│   │   ├── middleware
+│   │   │   ├── auth.ts
+│   │   │   └── error.ts
+│   │   ├── models
+│   │   │   ├── Course.ts
+│   │   │   ├── Enrollment.ts
+│   │   │   ├── Review.ts
+│   │   │   └── User.ts
+│   │   ├── routes
+│   │   │   ├── admin.ts
+│   │   │   ├── auth.ts
+│   │   │   ├── courses.ts
+│   │   │   ├── enrollments.ts
+│   │   │   ├── payments.ts
+│   │   │   ├── recommendations.ts
+│   │   │   ├── reviews.ts
+│   │   │   └── uploads.ts
+│   │   ├── seed.ts
+│   │   ├── server.ts
+│   │   ├── types
+│   │   │   └── express.d.ts
+│   │   └── utils
+│   │       ├── http.ts
+│   │       ├── serializers.ts
+│   │       └── tokens.ts
+│   └── tsconfig.json
+├── frontend
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── jest.config.cjs
+│   ├── package.json
+│   ├── src
+│   │   ├── App.tsx
+│   │   ├── components
+│   │   │   ├── Avatar.tsx
+│   │   │   ├── CourseCard.test.tsx
+│   │   │   ├── CourseCard.tsx
+│   │   │   ├── FilterBar.tsx
+│   │   │   ├── Layout.tsx
+│   │   │   ├── Logo.tsx
+│   │   │   ├── ProtectedRoute.tsx
+│   │   │   └── Spinner.tsx
+│   │   ├── context
+│   │   │   ├── AuthContext.tsx
+│   │   │   └── auth-context.ts
+│   │   ├── hooks
+│   │   │   └── useAuth.ts
+│   │   ├── lib
+│   │   │   ├── api.ts
+│   │   │   ├── demoCourses.ts
+│   │   │   └── format.ts
+│   │   ├── main.tsx
+│   │   ├── pages
+│   │   │   ├── AdminPage.tsx
+│   │   │   ├── AuthPage.tsx
+│   │   │   ├── CourseDetailPage.tsx
+│   │   │   ├── CoursesPage.tsx
+│   │   │   ├── DashboardPage.tsx
+│   │   │   ├── LandingPage.tsx
+│   │   │   ├── LearnPage.tsx
+│   │   │   └── NotFoundPage.tsx
+│   │   ├── styles.css
+│   │   ├── test
+│   │   │   ├── setup.ts
+│   │   │   └── styleMock.cjs
+│   │   └── types.ts
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   ├── vercel.json
+│   └── vite.config.ts
+├── package-lock.json
+├── package.json
+└── vercel.json
 ```
 
 ## Features
