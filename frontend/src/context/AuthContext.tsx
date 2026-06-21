@@ -59,9 +59,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const updateUser = useCallback((updatedUser: User) => {
+    setUser(updatedUser);
+  }, []);
+
   const value = useMemo(
-    () => ({ user, loading, login, signup, googleLogin, logout }),
-    [user, loading, login, signup, googleLogin, logout]
+    () => ({ user, loading, login, signup, googleLogin, logout, updateUser }),
+    [user, loading, login, signup, googleLogin, logout, updateUser]
   );
   return <AuthContext value={value}>{children}</AuthContext>;
 }

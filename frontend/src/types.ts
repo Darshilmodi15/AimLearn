@@ -17,6 +17,11 @@ export interface Lesson {
   durationMinutes: number;
   order: number;
   preview: boolean;
+  quiz?: {
+    question: string;
+    options: string[];
+    correctAnswerIndex: number;
+  };
 }
 
 export interface Course {
@@ -79,6 +84,7 @@ export interface AdminReport {
     courses: number;
     enrollments: number;
     lessonsCompleted: number;
+    revenue: number;
   };
   popularCourses: Array<{ courseId: string; title: string; enrollments: number }>;
   recentEnrollments: Array<{

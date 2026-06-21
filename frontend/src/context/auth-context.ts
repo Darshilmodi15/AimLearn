@@ -8,6 +8,7 @@ export interface AuthContextValue {
   signup: (input: { name: string; email: string; password: string }) => Promise<User>;
   googleLogin: (credential: string) => Promise<User>;
   logout: () => Promise<void>;
+  updateUser: (user: User) => void;
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
