@@ -17,7 +17,14 @@ const lessonSchema = z.object({
   videoUrl: z.union([z.string().url(), z.literal("")]).optional(),
   durationMinutes: z.coerce.number().int().min(1).max(600).default(10),
   order: z.coerce.number().int().min(1),
-  preview: z.boolean().default(false)
+  preview: z.boolean().default(false),
+  quiz: z
+    .object({
+      question: z.string().trim().min(5).max(300),
+      options: z.array(z.string().trim().min(1)).min(2).max(6),
+      correctAnswerIndex: z.coerce.number().int().min(0)
+    })
+    .optional()
 });
 
 const courseSchema = z.object({
@@ -50,7 +57,14 @@ function sanitizeCourse(input: z.infer<typeof courseSchema>) {
         allowedAttributes: { a: ["href", "target", "rel"] },
         allowedSchemes: ["http", "https", "mailto"]
       }),
-      videoUrl: lesson.videoUrl || undefined
+      videoUrl: lesson.videoUrl || undefined,
+      quiz: lesson.quiz
+        ? {
+            question: sanitizeHtml(lesson.quiz.question, { allowedTags: [] }),
+            options: lesson.quiz.options.map((opt) => sanitizeHtml(opt, { allowedTags: [] })),
+            correctAnswerIndex: lesson.quiz.correctAnswerIndex
+          }
+        : undefined
     })),
     thumbnailUrl: input.thumbnailUrl || undefined,
     instructor: {
