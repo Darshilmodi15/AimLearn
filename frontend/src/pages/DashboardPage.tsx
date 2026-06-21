@@ -15,7 +15,7 @@ import { CourseCard } from "../components/CourseCard";
 import { Spinner } from "../components/Spinner";
 import { useAuth } from "../hooks/useAuth";
 import { apiFetch, getErrorMessage } from "../lib/api";
-import type { Course, Enrollment } from "../types";
+import type { Course, Enrollment, User } from "../types";
 
 export function DashboardPage() {
   const { user, updateUser } = useAuth();
