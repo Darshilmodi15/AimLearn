@@ -209,14 +209,14 @@ export function LearnPage() {
 
           <section className="knowledge-check">
             <span className="eyebrow">Knowledge check</span>
-            <h2>What is the strongest way to make this lesson useful?</h2>
+            <h2>{lesson.quiz?.question ?? "What is the strongest way to make this lesson useful?"}</h2>
             <p>Choose the best response before moving on.</p>
             <div className="quiz-options">
-              {[
+              {(lesson.quiz?.options ?? [
                 "Save it and revisit it eventually",
                 "Apply one idea to a real situation this week",
                 "Move quickly to the next lesson"
-              ].map((option, index) => (
+              ]).map((option, index) => (
                 <label className={answer === option ? "selected" : ""} key={option}>
                   <input
                     type="radio"
@@ -234,13 +234,23 @@ export function LearnPage() {
               ))}
             </div>
             {answerChecked ? (
-              <div className={answer.includes("Apply one idea") ? "quiz-feedback correct" : "quiz-feedback incorrect"}>
-                {answer.includes("Apply one idea") ? (
+              <div
+                className={
+                  (lesson.quiz
+                    ? lesson.quiz.options.indexOf(answer) === lesson.quiz.correctAnswerIndex
+                    : answer.includes("Apply one idea"))
+                    ? "quiz-feedback correct"
+                    : "quiz-feedback incorrect"
+                }
+              >
+                {(lesson.quiz
+                  ? lesson.quiz.options.indexOf(answer) === lesson.quiz.correctAnswerIndex
+                  : answer.includes("Apply one idea")) ? (
                   <>
-                    <Check size={17} /> Correct. Application turns information into capability.
+                    <Check size={17} /> Correct. You've understood the key takeaway of this lesson.
                   </>
                 ) : (
-                  "Try again. Look for the answer that connects learning to real practice."
+                  "Try again. Choose the option that best matches the lesson content."
                 )}
               </div>
             ) : null}
