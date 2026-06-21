@@ -345,6 +345,13 @@ summary:focus-visible {
   border-radius: 999px;
   font-size: 0.82rem;
   font-weight: 700;
+  /* Reset default button styling */
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  line-height: inherit;
 }
 
 .profile-trigger:hover {
@@ -362,10 +369,21 @@ summary:focus-visible {
   border-radius: var(--radius-sm);
   background: var(--surface);
   box-shadow: var(--shadow-md);
+  z-index: 50;
 }
 
-.profile-menu:hover .profile-dropdown,
-.profile-menu:focus-within .profile-dropdown {
+/* Hover bridge to bridge the 12px gap between trigger and dropdown */
+.profile-dropdown::before {
+  content: "";
+  position: absolute;
+  top: -16px;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: transparent;
+}
+
+.profile-dropdown.is-open {
   display: block;
 }
 

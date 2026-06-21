@@ -1,5 +1,5 @@
 import { BookOpen, LayoutDashboard, LogOut, Menu, ShieldCheck, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { Avatar } from "./Avatar";
@@ -11,11 +11,68 @@ export function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleLogout = async () => {
     await logout();
     navigate("/");
   };
+
+  const openMenu = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    setIsProfileMenuOpen(true);
+  };
+
+  const closeMenu = (delay = 200) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    if (delay > 0) {
+      timeoutRef.current = setTimeout(() => {
+        setIsProfileMenuOpen(false);
+      }, delay);
+    } else {
+      setIsProfileMenuOpen(false);
+    }
+  };
+
+  const handleBlur = (event: React.FocusEvent) => {
+    if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+      closeMenu(0);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        closeMenu(0);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeMenu(0);
+      }
+    };
+
+    if (isProfileMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [isProfileMenuOpen]);
 
   return (
     <div className="site-shell">
@@ -52,24 +109,43 @@ export function Layout() {
           </nav>
           <div className="header-actions">
             {user ? (
-              <div className="profile-menu">
-                <Link to="/dashboard" className="profile-trigger">
+              <div
+                ref={menuRef}
+                className="profile-menu"
+                onMouseEnter={openMenu}
+                onMouseLeave={() => closeMenu(200)}
+                onBlur={handleBlur}
+              >
+                <button
+                  type="button"
+                  className="profile-trigger"
+                  onClick={() => setIsProfileMenuOpen((prev) => !prev)}
+                  onFocus={openMenu}
+                  aria-haspopup="true"
+                  aria-expanded={isProfileMenuOpen}
+                >
                   <Avatar name={user.name} src={user.avatarUrl} size="small" />
                   <span>{user.name.split(" ")[0]}</span>
-                </Link>
-                <div className="profile-dropdown">
-                  <Link to="/dashboard">
+                </button>
+                <div className={`profile-dropdown ${isProfileMenuOpen ? "is-open" : ""}`}>
+                  <Link to="/dashboard" onClick={() => closeMenu(0)}>
                     <LayoutDashboard size={16} /> Dashboard
                   </Link>
-                  <Link to="/courses">
+                  <Link to="/courses" onClick={() => closeMenu(0)}>
                     <BookOpen size={16} /> Browse courses
                   </Link>
                   {user.role === "admin" ? (
-                    <Link to="/admin">
+                    <Link to="/admin" onClick={() => closeMenu(0)}>
                       <ShieldCheck size={16} /> Admin panel
                     </Link>
                   ) : null}
-                  <button type="button" onClick={handleLogout}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleLogout();
+                      closeMenu(0);
+                    }}
+                  >
                     <LogOut size={16} /> Sign out
                   </button>
                 </div>
