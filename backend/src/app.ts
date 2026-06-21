@@ -19,7 +19,12 @@ export const app = express();
 const allowedOrigins = new Set(env.CLIENT_URL.split(",").map((origin) => origin.trim()));
 
 app.set("trust proxy", 1);
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
+  })
+);
 app.use(
   cors({
     origin: [...allowedOrigins],
