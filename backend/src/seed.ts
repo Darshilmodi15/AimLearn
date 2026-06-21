@@ -10,12 +10,12 @@ const courseSeeds = [
     shortDescription: "Frame sharper problems, validate assumptions and make confident product decisions.",
     description:
       "A practical course for builders who want to move beyond feature lists and create products grounded in real customer needs.",
-    price: 79,
+    price: 4999,
     category: "Product",
     difficulty: "Intermediate" as const,
     featured: true,
     instructor: {
-      name: "Maya Bennett",
+      name: "Maya Iyer",
       title: "Product strategist & educator",
       bio: "Maya has spent twelve years helping teams turn ambiguous customer problems into focused, valuable products."
     },
@@ -40,9 +40,9 @@ const courseSeeds = [
     difficulty: "Beginner" as const,
     featured: true,
     instructor: {
-      name: "Noah Williams",
+      name: "Nikhil Sharma",
       title: "Design director",
-      bio: "Noah makes visual design principles practical for multidisciplinary teams and has led design across consumer and enterprise products."
+      bio: "Nikhil makes visual design principles practical for multidisciplinary teams and has led design across consumer and enterprise products."
     },
     lessonTitles: [
       "How people read interfaces",
@@ -60,7 +60,7 @@ const courseSeeds = [
     shortDescription: "Turn raw analysis into clear narratives that help stakeholders understand and act.",
     description:
       "Learn a repeatable framework for choosing evidence, building narrative flow and presenting analytical findings with clarity.",
-    price: 99,
+    price: 5999,
     category: "Data",
     difficulty: "Advanced" as const,
     featured: true,
@@ -84,14 +84,14 @@ const courseSeeds = [
     shortDescription: "Use TypeScript to design safer React APIs, model application state and prevent common bugs.",
     description:
       "Move from adding types after the fact to using TypeScript as a design tool for maintainable frontend applications.",
-    price: 89,
+    price: 4499,
     category: "Development",
     difficulty: "Intermediate" as const,
     featured: false,
     instructor: {
-      name: "Marcus Chen",
+      name: "Madhav Chawla",
       title: "Staff frontend engineer",
-      bio: "Marcus builds design systems and large TypeScript applications, with a focus on API quality and developer experience."
+      bio: "Madhav builds design systems and large TypeScript applications, with a focus on API quality and developer experience."
     },
     lessonTitles: [
       "Types as design constraints",
@@ -108,14 +108,14 @@ const courseSeeds = [
     shortDescription: "Create clarity, communicate decisions and help teams make progress when the path is uncertain.",
     description:
       "A practical leadership course for managers and senior individual contributors working through change and incomplete information.",
-    price: 109,
+    price: 6999,
     category: "Leadership",
     difficulty: "Advanced" as const,
     featured: false,
     instructor: {
-      name: "Elena Rodriguez",
+      name: "Esha Roy",
       title: "Executive coach",
-      bio: "Elena has coached leaders across high-growth technology companies and mission-driven organizations."
+      bio: "Esha has coached leaders across high-growth technology companies and mission-driven organizations."
     },
     lessonTitles: [
       "Name the uncertainty",
@@ -136,9 +136,9 @@ const courseSeeds = [
     difficulty: "Beginner" as const,
     featured: false,
     instructor: {
-      name: "Amara Okafor",
+      name: "Ananya Rao",
       title: "UX research consultant",
-      bio: "Amara helps product teams build lightweight, ethical research practices that fit real delivery timelines."
+      bio: "Ananya helps product teams build lightweight, ethical research practices that fit real delivery timelines."
     },
     lessonTitles: [
       "Define what you need to learn",

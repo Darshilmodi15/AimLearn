@@ -411,6 +411,7 @@ export function AdminPage() {
                     <input
                       value={form.title}
                       onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
+                      placeholder="e.g. TypeScript for Confident Frontends"
                       required
                       minLength={3}
                     />
@@ -422,6 +423,7 @@ export function AdminPage() {
                       onChange={(event) =>
                         setForm((current) => ({ ...current, shortDescription: event.target.value }))
                       }
+                      placeholder="e.g. Use TypeScript to design safer React APIs, model application state and prevent common bugs."
                       required
                       minLength={20}
                       maxLength={220}
@@ -432,6 +434,7 @@ export function AdminPage() {
                     <textarea
                       value={form.description}
                       onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
+                      placeholder="e.g. Move from adding types after the fact to using TypeScript as a design tool for maintainable frontend applications..."
                       required
                       minLength={40}
                     />
@@ -441,6 +444,7 @@ export function AdminPage() {
                     <input
                       value={form.category}
                       onChange={(event) => setForm((current) => ({ ...current, category: event.target.value }))}
+                      placeholder="e.g. Development"
                       required
                     />
                   </label>
@@ -458,7 +462,7 @@ export function AdminPage() {
                     </select>
                   </label>
                   <label>
-                    Price (USD)
+                    Price (INR)
                     <input
                       type="number"
                       min="0"
@@ -466,6 +470,7 @@ export function AdminPage() {
                       onChange={(event) =>
                         setForm((current) => ({ ...current, price: Number(event.target.value) }))
                       }
+                      placeholder="e.g. 2999"
                     />
                   </label>
                   <label>
@@ -489,6 +494,7 @@ export function AdminPage() {
                       onChange={(event) =>
                         setForm((current) => ({ ...current, instructorName: event.target.value }))
                       }
+                      placeholder="e.g. Nikhil Sharma"
                       required
                     />
                   </label>
@@ -499,6 +505,7 @@ export function AdminPage() {
                       onChange={(event) =>
                         setForm((current) => ({ ...current, instructorTitle: event.target.value }))
                       }
+                      placeholder="e.g. Senior Frontend Engineer"
                       required
                     />
                   </label>
@@ -509,6 +516,7 @@ export function AdminPage() {
                       onChange={(event) =>
                         setForm((current) => ({ ...current, instructorBio: event.target.value }))
                       }
+                      placeholder="e.g. Nikhil is an experienced engineer who has led UI development at scale..."
                       required
                       minLength={10}
                     />

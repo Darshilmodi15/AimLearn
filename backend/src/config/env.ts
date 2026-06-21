@@ -14,7 +14,7 @@ const envSchema = z.object({
   COOKIE_SAME_SITE: z.enum(["lax", "strict", "none"]).default("lax"),
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
-  STRIPE_CURRENCY: z.string().default("usd"),
+  STRIPE_CURRENCY: z.string().default("inr"),
   CLOUDINARY_CLOUD_NAME: z.string().optional(),
   CLOUDINARY_API_KEY: z.string().optional(),
   CLOUDINARY_API_SECRET: z.string().optional()

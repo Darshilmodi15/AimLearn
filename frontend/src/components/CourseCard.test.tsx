@@ -10,11 +10,11 @@ const course: Course = {
   slug: "practical-product-thinking",
   shortDescription: "A focused course for making stronger product decisions with evidence.",
   description: "A complete course description.",
-  price: 79,
+  price: 4999,
   category: "Product",
   difficulty: "Intermediate",
   instructor: {
-    name: "Maya Bennett",
+    name: "Maya Iyer",
     title: "Product strategist",
     bio: "Experienced product strategist and educator."
   },
@@ -41,7 +41,7 @@ describe("CourseCard", () => {
     );
 
     expect(screen.getByRole("heading", { name: course.title })).not.toBeNull();
-    expect(screen.getByText("$79")).not.toBeNull();
+    expect(screen.getByText(/4,999/)).not.toBeNull();
     expect(screen.getByText("1 lessons")).not.toBeNull();
     expect(screen.getByRole("link", { name: `View ${course.title}` }).getAttribute("href")).toBe(
       `/courses/${course.slug}`

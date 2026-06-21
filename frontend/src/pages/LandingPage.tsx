@@ -69,9 +69,9 @@ export function LandingPage() {
             </div>
             <div className="hero-trust">
               <div className="avatar-stack" aria-hidden="true">
-                <Avatar name="Maya Bennett" size="small" />
+                <Avatar name="Maya Iyer" size="small" />
                 <Avatar name="Priya Shah" size="small" />
-                <Avatar name="Noah Williams" size="small" />
+                <Avatar name="Nikhil Sharma" size="small" />
               </div>
               <div>
                 <span className="stars" aria-label="Rated 4.9 out of 5">
@@ -100,7 +100,7 @@ export function LandingPage() {
                 <div className="showcase-main">
                   <div className="showcase-heading">
                     <div>
-                      <small>Welcome back, Alex</small>
+                      <small>Welcome back, Aarav</small>
                       <strong>Continue learning</strong>
                     </div>
                     <span className="mini-avatar">AM</span>
@@ -212,9 +212,9 @@ export function LandingPage() {
               skills I could actually use in my work.
             </p>
             <footer>
-              <Avatar name="Elena Rodriguez" />
+              <Avatar name="Esha Roy" />
               <div>
-                <strong>Elena Rodriguez</strong>
+                <strong>Esha Roy</strong>
                 <span>Senior product designer</span>
               </div>
             </footer>

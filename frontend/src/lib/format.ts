@@ -1,8 +1,8 @@
 export function formatCurrency(value: number) {
   if (value === 0) return "Free";
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
     maximumFractionDigits: 0
   }).format(value);
 }

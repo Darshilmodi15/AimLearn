@@ -1,7 +1,7 @@
 import type { Course } from "../types";
 
 const sharedInstructor = {
-  name: "Maya Bennett",
+  name: "Maya Iyer",
   title: "Product strategist & educator",
   bio: "Maya has helped early-stage teams turn complex ideas into focused, useful products."
 };
@@ -14,7 +14,7 @@ export const demoCourses: Course[] = [
     shortDescription: "Learn to frame sharper problems, validate assumptions and make confident product decisions.",
     description:
       "A practical course for builders who want to move beyond feature lists and create products grounded in real customer needs.",
-    price: 79,
+    price: 4999,
     category: "Product",
     difficulty: "Intermediate",
     instructor: sharedInstructor,
@@ -40,9 +40,9 @@ export const demoCourses: Course[] = [
     category: "Design",
     difficulty: "Beginner",
     instructor: {
-      name: "Noah Williams",
+      name: "Nikhil Sharma",
       title: "Design director",
-      bio: "Noah makes visual design principles practical for multidisciplinary teams."
+      bio: "Nikhil makes visual design principles practical for multidisciplinary teams."
     },
     lessons: Array.from({ length: 10 }, (_, index) => ({
       _id: `design-${index}`,
@@ -62,7 +62,7 @@ export const demoCourses: Course[] = [
     shortDescription: "Turn raw analysis into clear narratives that help stakeholders understand and act.",
     description:
       "Learn a repeatable framework for choosing evidence, building narrative flow and presenting with clarity.",
-    price: 99,
+    price: 5999,
     category: "Data",
     difficulty: "Advanced",
     instructor: {

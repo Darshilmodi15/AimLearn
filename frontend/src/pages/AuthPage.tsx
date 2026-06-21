@@ -59,7 +59,7 @@ export function AuthPage({ mode }: { mode: "login" | "signup" }) {
         </div>
         <blockquote>
           “The clarity of each course made it easy to keep going—even during a busy week.”
-          <span>— Jordan Lee, AimLearn member</span>
+          <span>— Arjun Mehta, AimLearn member</span>
         </blockquote>
       </div>
       <div className="auth-form-wrap">
@@ -79,7 +79,7 @@ export function AuthPage({ mode }: { mode: "login" | "signup" }) {
                 autoComplete="name"
                 value={form.name}
                 onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
-                placeholder="Your full name"
+                placeholder="e.g. Aarav Sharma"
                 required
                 minLength={2}
               />
@@ -92,7 +92,7 @@ export function AuthPage({ mode }: { mode: "login" | "signup" }) {
               autoComplete="email"
               value={form.email}
               onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
-              placeholder="you@example.com"
+              placeholder="e.g. aarav@example.com"
               required
             />
           </label>
