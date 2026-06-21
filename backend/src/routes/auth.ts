@@ -177,4 +177,45 @@ router.get(
   })
 );
 
+const profileSchema = z.object({
+  name: z.string().trim().min(2).max(80).optional(),
+  email: z.string().trim().email().toLowerCase().optional(),
+  avatarUrl: z.union([z.string().url(), z.literal("")]).optional(),
+  password: z
+    .string()
+    .min(8)
+    .max(72)
+    .regex(/[A-Z]/, "Password must contain an uppercase letter.")
+    .regex(/[a-z]/, "Password must contain a lowercase letter.")
+    .regex(/\d/, "Password must contain a number.")
+    .optional()
+});
+
+router.put(
+  "/profile",
+  authenticate,
+  asyncHandler(async (request, response) => {
+    const input = profileSchema.parse(request.body);
+    const user = request.user!;
+
+    if (input.name) user.name = input.name;
+    if (input.avatarUrl !== undefined) user.avatarUrl = input.avatarUrl || undefined;
+
+    if (input.email && input.email !== user.email) {
+      const emailExists = await User.exists({ email: input.email, _id: { $ne: user._id } });
+      if (emailExists) {
+        throw new HttpError(409, "An account already exists for that email.");
+      }
+      user.email = input.email;
+    }
+
+    if (input.password) {
+      user.passwordHash = await bcrypt.hash(input.password, 12);
+    }
+
+    await user.save();
+    response.json({ user: serializeUser(user) });
+  })
+);
+
 export default router;
