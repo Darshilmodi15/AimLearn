@@ -26,13 +26,14 @@ export const stripeWebhook = asyncHandler(async (request: Request, response) => 
   const stripe = getStripe();
   const event = stripe.webhooks.constructEvent(request.body, signature, env.STRIPE_WEBHOOK_SECRET);
   if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
+    const session = event.data.object as Stripe.Checkout.Session;
     const userId = session.metadata?.userId;
     const courseId = session.metadata?.courseId;
+    const pricePaid = session.amount_total ? session.amount_total / 100 : 0;
     if (userId && courseId) {
       await Enrollment.findOneAndUpdate(
         { userId, courseId },
-        { $setOnInsert: { enrolledAt: new Date(), completedLessons: [] } },
+        { $setOnInsert: { enrolledAt: new Date(), completedLessons: [], pricePaid } },
         { upsert: true }
       );
     }

@@ -37,7 +37,7 @@ router.get(
 router.get(
   "/reports",
   asyncHandler(async (_request, response) => {
-    const [users, courses, enrollments, completedLessons, popularCourses, recentEnrollments] =
+    const [users, courses, enrollments, completedLessons, popularCourses, recentEnrollments, revenueRes] =
       await Promise.all([
         User.countDocuments(),
         Course.countDocuments({ published: true }),
@@ -59,7 +59,10 @@ router.get(
           .populate("courseId", "title")
           .sort({ enrolledAt: -1 })
           .limit(8)
-          .lean()
+          .lean(),
+        Enrollment.aggregate<{ total: number }>([
+          { $group: { _id: null, total: { $sum: "$pricePaid" } } }
+        ])
       ]);
 
     response.json({
@@ -67,7 +70,8 @@ router.get(
         users,
         courses,
         enrollments,
-        lessonsCompleted: completedLessons[0]?.total ?? 0
+        lessonsCompleted: completedLessons[0]?.total ?? 0,
+        revenue: revenueRes[0]?.total ?? 0
       },
       popularCourses,
       recentEnrollments
