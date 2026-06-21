@@ -167,6 +167,19 @@ function lessonContent(title: string, index: number) {
   `;
 }
 
+function getLessonQuiz(title: string) {
+  return {
+    question: `What is the primary outcome when applying the principles of "${title}"?`,
+    options: [
+      "Application turns theoretical information into practical capability",
+      "Moving quickly to the next lesson to finish the course fast",
+      "Memorizing the concepts without putting them into practice",
+      "Postponing the work until you have more free time"
+    ],
+    correctAnswerIndex: 0
+  };
+}
+
 async function seed() {
   await connectDatabase();
 
@@ -200,7 +213,8 @@ async function seed() {
           contentHtml: lessonContent(title, index),
           durationMinutes: 12 + (index % 4) * 4,
           order: index + 1,
-          preview: index === 0
+          preview: index === 0,
+          quiz: getLessonQuiz(title)
         }))
       },
       { upsert: true, new: true, runValidators: true, setDefaultsOnInsert: true }
