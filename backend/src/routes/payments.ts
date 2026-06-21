@@ -1,4 +1,5 @@
 import { Router, type Request } from "express";
+import mongoose from "mongoose";
 import Stripe from "stripe";
 import { z } from "zod";
 import { env } from "../config/env.js";
@@ -46,6 +47,11 @@ router.post(
   authenticate,
   asyncHandler(async (request, response) => {
     const { courseId } = z.object({ courseId: z.string().min(1) }).parse(request.body);
+
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
+      throw new HttpError(400, "Invalid course ID format.");
+    }
+
     const course = await Course.findById(courseId);
     if (!course || !course.published) throw new HttpError(404, "Course not found.");
     if (course.price <= 0) throw new HttpError(400, "This course can be enrolled in for free.");
@@ -53,29 +59,41 @@ router.post(
     const existing = await Enrollment.exists({ userId: request.user!._id, courseId });
     if (existing) throw new HttpError(409, "You are already enrolled in this course.");
 
+    const origins = env.CLIENT_URL.split(",").map((o) => o.trim());
+    const requestOrigin = request.header("origin");
+    const clientUrl = requestOrigin && origins.includes(requestOrigin) ? requestOrigin : origins[0];
+
     const stripe = getStripe();
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      customer_email: request.user!.email,
-      line_items: [
-        {
-          quantity: 1,
-          price_data: {
-            currency: env.STRIPE_CURRENCY,
-            unit_amount: Math.round(course.price * 100),
-            product_data: {
-              name: course.title,
-              description: course.shortDescription
+    try {
+      const session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        customer_email: request.user!.email,
+        line_items: [
+          {
+            quantity: 1,
+            price_data: {
+              currency: env.STRIPE_CURRENCY,
+              unit_amount: Math.round(course.price * 100),
+              product_data: {
+                name: course.title,
+                description: course.shortDescription
+              }
             }
           }
-        }
-      ],
-      metadata: { userId: request.user!.id, courseId: course.id },
-      success_url: `${env.CLIENT_URL}/dashboard?payment=success`,
-      cancel_url: `${env.CLIENT_URL}/courses/${course.slug}?payment=cancelled`
-    });
+        ],
+        metadata: { userId: request.user!.id, courseId: course.id },
+        success_url: `${clientUrl}/dashboard?payment=success`,
+        cancel_url: `${clientUrl}/courses/${course.slug}?payment=cancelled`
+      });
 
-    response.json({ url: session.url });
+      response.json({ url: session.url });
+    } catch (error: any) {
+      console.error("Stripe Checkout Session Creation Error:", error);
+      if (error instanceof Stripe.errors.StripeError) {
+        throw new HttpError(400, `Stripe payment gateway error: ${error.message}`);
+      }
+      throw error;
+    }
   })
 );
 

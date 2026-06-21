@@ -41,4 +41,12 @@ describe("AimLearn API", () => {
     expect(response.status).toBe(401);
     expect(response.body.message).toBe("Please sign in to continue.");
   });
+
+  it("rejects unauthenticated checkout requests", async () => {
+    const response = await request(app).post("/api/payments/checkout").send({
+      courseId: "507f1f77bcf86cd799439011"
+    });
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe("Please sign in to continue.");
+  });
 });
