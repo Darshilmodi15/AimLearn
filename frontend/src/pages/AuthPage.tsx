@@ -1,11 +1,12 @@
 import { ArrowRight, BadgeCheck, BookOpenCheck, Eye, EyeOff, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { useAuth } from "../hooks/useAuth";
 import { getErrorMessage } from "../lib/api";
 
 export function AuthPage({ mode }: { mode: "login" | "signup" }) {
-  const { user, login, signup } = useAuth();
+  const { user, login, signup, googleLogin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +16,8 @@ export function AuthPage({ mode }: { mode: "login" | "signup" }) {
 
   if (user) return <Navigate to="/dashboard" replace />;
 
+  const destination = (location.state as { from?: string } | null)?.from ?? "/dashboard";
+
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
@@ -22,10 +25,23 @@ export function AuthPage({ mode }: { mode: "login" | "signup" }) {
     try {
       if (mode === "signup") await signup(form);
       else await login({ email: form.email, password: form.password });
-      const destination = (location.state as { from?: string } | null)?.from ?? "/dashboard";
       navigate(destination, { replace: true });
     } catch (submitError) {
       setError(getErrorMessage(submitError));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (response: CredentialResponse) => {
+    if (!response.credential) return;
+    setLoading(true);
+    setError("");
+    try {
+      await googleLogin(response.credential);
+      navigate(destination, { replace: true });
+    } catch (googleError) {
+      setError(getErrorMessage(googleError));
     } finally {
       setLoading(false);
     }
@@ -58,7 +74,7 @@ export function AuthPage({ mode }: { mode: "login" | "signup" }) {
           </ul>
         </div>
         <blockquote>
-          “The clarity of each course made it easy to keep going—even during a busy week.”
+          "The clarity of each course made it easy to keep going—even during a busy week."
           <span>— Arjun Mehta, AimLearn member</span>
         </blockquote>
       </div>
@@ -71,6 +87,20 @@ export function AuthPage({ mode }: { mode: "login" | "signup" }) {
             <Link to={isSignup ? "/login" : "/signup"}>{isSignup ? "Log in" : "Create an account"}</Link>
           </p>
           {error ? <div className="form-error">{error}</div> : null}
+          <div className="google-login-wrap" id="google-sign-in-button">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => setError("Google sign-in failed. Please try again.")}
+              text={isSignup ? "signup_with" : "signin_with"}
+              shape="rectangular"
+              size="large"
+              width="430"
+              logo_alignment="center"
+            />
+          </div>
+          <div className="auth-divider">
+            <span>or</span>
+          </div>
           {isSignup ? (
             <label>
               Full name
@@ -124,7 +154,7 @@ export function AuthPage({ mode }: { mode: "login" | "signup" }) {
             {loading ? "Please wait…" : isSignup ? "Create account" : "Log in"} <ArrowRight size={18} />
           </button>
           <small className="terms-copy">
-            By continuing, you agree to AimLearn’s terms and acknowledge the privacy policy.
+            By continuing, you agree to AimLearn's terms and acknowledge the privacy policy.
           </small>
         </form>
       </div>
