@@ -136,6 +136,47 @@ export function AdminPage() {
     }));
   };
 
+  const updateLessonQuiz = (index: number, field: string, value: string | number | boolean | string[]) => {
+    setForm((current) => ({
+      ...current,
+      lessons: current.lessons.map((lesson, lessonIndex) => {
+        if (lessonIndex === index) {
+          const quiz = lesson.quiz ?? { question: "", options: ["", "", "", ""], correctAnswerIndex: 0 };
+          return {
+            ...lesson,
+            quiz: {
+              ...quiz,
+              [field]: value
+            }
+          };
+        }
+        return lesson;
+      })
+    }));
+  };
+
+  const updateLessonQuizOption = (lessonIndex: number, optionIndex: number, value: string) => {
+    setForm((current) => ({
+      ...current,
+      lessons: current.lessons.map((lesson, idx) => {
+        if (idx === lessonIndex) {
+          const quiz = lesson.quiz ?? { question: "", options: ["", "", "", ""], correctAnswerIndex: 0 };
+          const options = [...quiz.options];
+          while (options.length <= optionIndex) options.push("");
+          options[optionIndex] = value;
+          return {
+            ...lesson,
+            quiz: {
+              ...quiz,
+              options
+            }
+          };
+        }
+        return lesson;
+      })
+    }));
+  };
+
   const addLesson = () => {
     setForm((current) => ({
       ...current,
@@ -171,7 +212,20 @@ export function AdminPage() {
         bio: form.instructorBio,
         avatarUrl: ""
       },
-      lessons: form.lessons.map((lesson, index) => ({ ...lesson, order: index + 1 })),
+      lessons: form.lessons.map((lesson, index) => {
+        const hasQuiz = lesson.quiz && lesson.quiz.question.trim().length > 0;
+        return {
+          ...lesson,
+          order: index + 1,
+          quiz: hasQuiz
+            ? {
+                question: lesson.quiz!.question.trim(),
+                options: lesson.quiz!.options.map((opt) => opt.trim()).filter((opt) => opt.length > 0),
+                correctAnswerIndex: lesson.quiz!.correctAnswerIndex
+              }
+            : undefined
+        };
+      }),
       featured: form.featured,
       published: form.published
     };
@@ -248,16 +302,16 @@ export function AdminPage() {
           <>
             <div className="admin-metrics">
               {[
-                { label: "Total learners", value: report.metrics.users, icon: Users },
-                { label: "Published courses", value: report.metrics.courses, icon: BookOpen },
-                { label: "Enrollments", value: report.metrics.enrollments, icon: UserRound },
-                { label: "Lessons completed", value: report.metrics.lessonsCompleted, icon: BarChart3 }
-              ].map(({ label, value, icon: Icon }) => (
+                { label: "Total learners", value: report.metrics.users, icon: Users, format: (val: number) => val.toLocaleString() },
+                { label: "Published courses", value: report.metrics.courses, icon: BookOpen, format: (val: number) => val.toLocaleString() },
+                { label: "Enrollments", value: report.metrics.enrollments, icon: UserRound, format: (val: number) => val.toLocaleString() },
+                { label: "Total revenue", value: report.metrics.revenue, icon: BarChart3, format: (val: number) => formatCurrency(val) }
+              ].map(({ label, value, icon: Icon, format }) => (
                 <article key={label}>
                   <span>
                     <Icon />
                   </span>
-                  <strong>{value.toLocaleString()}</strong>
+                  <strong>{format(value)}</strong>
                   <p>{label}</p>
                 </article>
               ))}
@@ -577,6 +631,45 @@ export function AdminPage() {
                         />
                         Allow public preview
                       </label>
+                      <div className="lesson-quiz-editor">
+                        <h4 style={{ margin: "16px 0 8px 0", fontSize: "14px", fontWeight: "600" }}>Lesson Quiz (Knowledge Check)</h4>
+                        <label style={{ display: "block", marginBottom: "8px" }}>
+                          Question
+                          <input
+                            value={item.quiz?.question ?? ""}
+                            onChange={(event) => updateLessonQuiz(index, "question", event.target.value)}
+                            placeholder="e.g. What is the primary difference between output and outcome?"
+                            style={{ width: "100%", marginTop: "4px" }}
+                          />
+                        </label>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "8px" }}>
+                          {[0, 1, 2, 3].map((optIdx) => (
+                            <label key={optIdx} style={{ display: "block" }}>
+                              Option {String.fromCharCode(65 + optIdx)}
+                              <input
+                                value={item.quiz?.options?.[optIdx] ?? ""}
+                                onChange={(event) => updateLessonQuizOption(index, optIdx, event.target.value)}
+                                placeholder={`e.g. Option text`}
+                                style={{ width: "100%", marginTop: "4px" }}
+                              />
+                            </label>
+                          ))}
+                        </div>
+                        <label style={{ display: "block", marginBottom: "16px" }}>
+                          Correct Option
+                          <select
+                            value={item.quiz?.correctAnswerIndex ?? 0}
+                            onChange={(event) => updateLessonQuiz(index, "correctAnswerIndex", Number(event.target.value))}
+                            style={{ width: "100%", marginTop: "4px" }}
+                          >
+                            {[0, 1, 2, 3].map((optIdx) => (
+                              <option key={optIdx} value={optIdx}>
+                                Option {String.fromCharCode(65 + optIdx)}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
                       {form.lessons.length > 1 ? (
                         <button
                           className="danger-link"
