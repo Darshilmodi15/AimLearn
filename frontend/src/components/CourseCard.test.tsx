@@ -25,7 +25,15 @@ const course: Course = {
       contentHtml: "<p>Lesson content</p>",
       durationMinutes: 20,
       order: 1,
-      preview: true
+      preview: true,
+      quiz: {
+        question: "What is the primary difference between outputs and outcomes?",
+        options: [
+          "Outputs are features, outcomes are values",
+          "There is no difference"
+        ],
+        correctAnswerIndex: 0
+      }
     }
   ],
   featured: true,

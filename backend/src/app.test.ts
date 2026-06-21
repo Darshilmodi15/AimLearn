@@ -24,4 +24,21 @@ describe("AimLearn API", () => {
     expect(response.status).toBe(403);
     expect(response.body.message).toBe("This request origin is not allowed.");
   });
+
+  it("rejects unauthenticated profile update requests", async () => {
+    const response = await request(app).put("/api/auth/profile").send({
+      name: "Valid Name",
+      password: "WeakPassword1"
+    });
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe("Please sign in to continue.");
+  });
+
+  it("rejects unauthenticated course creation requests", async () => {
+    const response = await request(app).post("/api/courses").send({
+      title: "Test Course"
+    });
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe("Please sign in to continue.");
+  });
 });
