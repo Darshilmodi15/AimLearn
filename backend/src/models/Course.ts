@@ -1,5 +1,11 @@
 import { Schema, model, type Types } from "mongoose";
 
+export interface IQuiz {
+  question: string;
+  options: string[];
+  correctAnswerIndex: number;
+}
+
 export interface ILesson {
   _id: Types.ObjectId;
   title: string;
@@ -8,6 +14,7 @@ export interface ILesson {
   durationMinutes: number;
   order: number;
   preview: boolean;
+  quiz?: IQuiz;
 }
 
 export interface ICourse {
@@ -38,7 +45,12 @@ const lessonSchema = new Schema<ILesson>({
   videoUrl: { type: String, trim: true },
   durationMinutes: { type: Number, min: 1, default: 10 },
   order: { type: Number, min: 1, required: true },
-  preview: { type: Boolean, default: false }
+  preview: { type: Boolean, default: false },
+  quiz: {
+    question: { type: String, trim: true },
+    options: { type: [String], default: [] },
+    correctAnswerIndex: { type: Number, default: 0 }
+  }
 });
 
 const courseSchema = new Schema<ICourse>(

@@ -5,6 +5,7 @@ export interface IEnrollment {
   courseId: Types.ObjectId;
   completedLessons: Types.ObjectId[];
   lastLessonId?: Types.ObjectId;
+  pricePaid: number;
   enrolledAt: Date;
   updatedAt: Date;
 }
@@ -15,6 +16,7 @@ const enrollmentSchema = new Schema<IEnrollment>(
     courseId: { type: Schema.Types.ObjectId, ref: "Course", required: true },
     completedLessons: [{ type: Schema.Types.ObjectId }],
     lastLessonId: { type: Schema.Types.ObjectId },
+    pricePaid: { type: Number, default: 0 },
     enrolledAt: { type: Date, default: Date.now }
   },
   { timestamps: true }
