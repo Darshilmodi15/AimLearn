@@ -44,11 +44,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return response.user;
   }, []);
 
+  const googleLogin = useCallback(async (credential: string) => {
+    const response = await apiFetch<{ user: User }>("/auth/google", {
+      method: "POST",
+      body: JSON.stringify({ credential }),
+      retryAuth: false
+    });
+    setUser(response.user);
+    return response.user;
+  }, []);
+
   const logout = useCallback(async () => {
     await apiFetch("/auth/logout", { method: "POST", retryAuth: false });
     setUser(null);
   }, []);
 
-  const value = useMemo(() => ({ user, loading, login, signup, logout }), [user, loading, login, signup, logout]);
+  const value = useMemo(
+    () => ({ user, loading, login, signup, googleLogin, logout }),
+    [user, loading, login, signup, googleLogin, logout]
+  );
   return <AuthContext value={value}>{children}</AuthContext>;
 }
